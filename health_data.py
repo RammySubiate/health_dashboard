@@ -1,8 +1,10 @@
+# health_data.py
+import pandas as pd
 import random
 import datetime
-import pandas as pd
+import os
 
-def generate_mock_health_data(days=365):
+def generate_mock_health_data(days=30):
     today = datetime.date.today()
     records = []
 
@@ -22,10 +24,17 @@ def generate_mock_health_data(days=365):
         }
         records.append(record)
 
-    return pd.DataFrame(records)
+    df = pd.DataFrame(records)
+    return df.sort_values("date")
 
-# Example usage
-df = generate_mock_health_data()
-print(df.head())
+def load_data():
+    filename = "mock_health_data.csv"
+    if not os.path.exists(filename):
+        df = generate_mock_health_data()
+        df.to_csv(filename, index=False)
+    df = pd.read_csv(filename)
+    df["date"] = pd.to_datetime(df["date"])
+    return df.sort_values("date")
 
-df.to_csv("mock_health_data.csv", index=False)
+
+
